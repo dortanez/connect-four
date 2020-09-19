@@ -46,18 +46,26 @@ function makeHtmlBoard() {
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
-
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  for(let y = HEIGHT - 1; y >= 0; y--) {
+    if(board[y][x] !== null) {
+      continue;
+    } else {
+      console.log(y)
+      return y;
+    }
+  }
+  
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
-
 function placeInTable(y, x) {
   const piece = document.createElement('div');
   piece.classList.add('piece');
   piece.classList.add(`p${currPlayer}`);
+
+  const cell = document.getElementById(`${y}-${x}`);
+  cell.appendChild(piece);
 }
 
 /** endGame: announce game end */
@@ -79,19 +87,35 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
   placeInTable(y, x);
+
+  // update board variable to which player took the spot - if the spot is taken by player number, do nothing. else, add player number in spot
+  if(board[y][x] !== null) {
+    return;
+  } else {
+    board[y][x] = currPlayer;
+  }
+  
 
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
+  // check for tie - see if every value in board variable has player number
+  // const isTie = board.every((val) => {
+  //   return val.indexOf(null) === -1
+  // })
+  // if(isTie) {
+  //   alert('It is a tie!');
+  // }
 
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  if(currPlayer === 1) {
+    currPlayer = 2;
+  } else {
+    currPlayer = 1;
+  }
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
