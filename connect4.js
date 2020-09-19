@@ -1,15 +1,16 @@
 const WIDTH = 7;
 const HEIGHT = 6;
+let currPlayer = 1; 
+let board = [];
 
-let currPlayer = 1; // active player: 1 or 2
-const board = [];
-
+// make board array
 function makeBoard() {
   for(let y = 0; y < HEIGHT; y++) {
-    board.push(Array.from({length:WIDTH}))
+    board.push(Array.from({length: WIDTH}))
   }
 }
 
+// make visual board on html page
 function makeHtmlBoard() {
   const htmlBoard = document.querySelector('#board');
   const top = document.createElement("tr");
@@ -24,52 +25,52 @@ function makeHtmlBoard() {
   }
   htmlBoard.append(top);
 
-  // creating board boxes
+  // creating board slots
   for (let y = 0; y < HEIGHT; y++) {
     const row = document.createElement("tr");
-    
-    for (var x = 0; x < WIDTH; x++) {
+
+    for (let x = 0; x < WIDTH; x++) {
       const cell = document.createElement("td");
       cell.setAttribute("id", `${y}-${x}`);
+      cell.setAttribute("class", "slot");
       row.append(cell);
     }
     htmlBoard.append(row);
   }
 }
-
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  for (let y = HEIGHT - 1; y >= 0; y--) {
+    if (!board[y][x]) {
+      return y;
+    }
+  }
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
+  // make a div and insert into correct table cell
   const gamePiece = document.createElement('div');
-  gamePiece.setAttribute('class','piece');
-  gamePiece.className += `p${currPlayer}`;
+  gamePiece.classList.add('piece');
+  gamePiece.classList.add(`p${currPlayer}`);
   gamePiece.style.top = -50 * (y + 2);
 
   const spot = document.getElementById(`${y}-${x}`);
   spot.append(gamePiece);
 }
 
-/** endGame: announce game end */
-
 function endGame(msg) {
-  // TODO: pop up alert message
+  alert('you are done');
 }
 
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(e) {
-  // get x from ID of clicked cell
   const x = +e.target.id;
 
-  // get next spot in column (if none, ignore click)
   const y = findSpotForCol(x);
   if (y === null) {
     return;
@@ -85,14 +86,12 @@ function handleClick(e) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
+  // check if all slots are filled
   if (board.every(row => row.every(cell => cell))) {
     return endGame('Tie!');
   }
 
-  // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  // switching player's turn
   currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
@@ -132,3 +131,4 @@ function checkForWin() {
 
 makeBoard();
 makeHtmlBoard();
+
