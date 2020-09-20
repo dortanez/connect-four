@@ -1,7 +1,9 @@
 const WIDTH = 7;
 const HEIGHT = 6;
 
-let currPlayer = 1; // active player: 1 or 2
+const playerTurn = document.getElementById('player-turn');
+let currPlayer = 1; 
+playerTurn.innerText = 'Player 1\'s turn'
 
 // array of rows, each row is array of cells  (board[y][x])
 const board = []; 
@@ -38,6 +40,7 @@ function makeHtmlBoard() {
     const row = document.createElement("tr");
     for (let x = 0; x < WIDTH; x++) {
       const cell = document.createElement("td");
+      cell.classList.add('cell');
       cell.setAttribute("id", `${y}-${x}`);
       row.append(cell);
     }
@@ -51,7 +54,6 @@ function findSpotForCol(x) {
     if(board[y][x] !== null) {
       continue;
     } else {
-      console.log(y)
       return y;
     }
   }
@@ -67,21 +69,18 @@ function placeInTable(y, x) {
   const cell = document.getElementById(`${y}-${x}`);
   cell.appendChild(piece);
 }
-
-/** endGame: announce game end */
-
 function endGame(msg) {
-  // TODO: pop up alert message
+    alert(msg);
+  location.reload();
 }
 
-/** handleClick: handle click of column top to play piece */
-
+// clicking to play a piece
 function handleClick(evt) {
   // get x from ID of clicked cell
-  var x = +evt.target.id;
+  const x = +evt.target.id;
 
   // get next spot in column (if none, ignore click)
-  var y = findSpotForCol(x);
+  const y = findSpotForCol(x);
   if (y === null) {
     return;
   }
@@ -95,26 +94,32 @@ function handleClick(evt) {
   } else {
     board[y][x] = currPlayer;
   }
-  
 
   // check for win
-  if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
+
+    if (checkForWin()) {
+      return endGame(`Player ${currPlayer} wins!`);
   }
 
-  // check for tie - see if every value in board variable has player number
-  // const isTie = board.every((val) => {
-  //   return val.indexOf(null) === -1
-  // })
-  // if(isTie) {
-  //   alert('It is a tie!');
-  // }
+  
+  // check for tie - see if every value in board array has player number
+  const isTie = () => {
+    return board.every((val) => {
+      return val.indexOf(null) === -1;
+    })
+  }
+  if(isTie()) {
+    alert('tie');
+    location.reload();
+  }
 
   // switch players
   if(currPlayer === 1) {
     currPlayer = 2;
+    playerTurn.innerText = `Player ${currPlayer}'s turn`;
   } else {
     currPlayer = 1;
+    playerTurn.innerText = `Player ${currPlayer}'s turn`;
   }
 }
 
@@ -136,14 +141,32 @@ function checkForWin() {
     );
   }
 
-  // TODO: read and understand this code. Add comments to help you.
-
-  for (var y = 0; y < HEIGHT; y++) {
-    for (var x = 0; x < WIDTH; x++) {
-      var horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-      var vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
-      var diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
-      var diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
+  for (let y = 0; y < HEIGHT; y++) {
+    for (let x = 0; x < WIDTH; x++) {
+      const horiz = [
+        [y, x], 
+        [y, x + 1], 
+        [y, x + 2], 
+        [y, x + 3]
+      ];
+      const vert = [
+        [y, x], 
+        [y + 1, x], 
+        [y + 2, x], 
+        [y + 3, x]
+      ];
+      const diagDR = [
+        [y, x], 
+        [y + 1, x + 1], 
+        [y + 2, x + 2], 
+        [y + 3, x + 3]
+      ];
+      const diagDL = [
+        [y, x], 
+        [y + 1, x - 1], 
+        [y + 2, x - 2], 
+        [y + 3, x - 3]
+      ];
 
       if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
         return true;
