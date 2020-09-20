@@ -9,7 +9,7 @@ playerTurn.innerText = 'Player 1\'s turn'
 const board = []; 
 
 // create board array
-function makeBoard() {
+const makeBoard = () => {
   for(let i = 0; i < HEIGHT; i++) {
     const arr = [];
     for(let j = 0; j < WIDTH; j++) {
@@ -19,7 +19,7 @@ function makeBoard() {
   }
 }
 
-function makeHtmlBoard() {
+const makeHtmlBoard = () => {
   const board = document.querySelector('#board');
 
   // create top row
@@ -49,7 +49,7 @@ function makeHtmlBoard() {
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
-function findSpotForCol(x) {
+const findSpotForCol = (x) => {
   for(let y = HEIGHT - 1; y >= 0; y--) {
     if(board[y][x] !== null) {
       continue;
@@ -57,11 +57,10 @@ function findSpotForCol(x) {
       return y;
     }
   }
-  
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
-function placeInTable(y, x) {
+const placeInTable = (y,x) => {
   const piece = document.createElement('div');
   piece.classList.add('piece');
   piece.classList.add(`p${currPlayer}`);
@@ -69,13 +68,23 @@ function placeInTable(y, x) {
   const cell = document.getElementById(`${y}-${x}`);
   cell.appendChild(piece);
 }
-function endGame(msg) {
-    alert(msg);
-  location.reload();
+
+const endGame = (msg) => {
+    const interval = setInterval(() => {
+      alert(msg);
+      clearInterval(interval)
+    },500);
+    restartGame();
+}
+
+const restartGame = () => {
+  setInterval(() => {
+    location.reload();
+  },500)
 }
 
 // clicking to play a piece
-function handleClick(evt) {
+const handleClick = (evt) => {
   // get x from ID of clicked cell
   const x = +evt.target.id;
 
@@ -96,12 +105,10 @@ function handleClick(evt) {
   }
 
   // check for win
-
-    if (checkForWin()) {
-      return endGame(`Player ${currPlayer} wins!`);
+  if (checkForWin()) {
+    return endGame(`Player ${currPlayer} wins!`);
   }
 
-  
   // check for tie - see if every value in board array has player number
   const isTie = () => {
     return board.every((val) => {
@@ -125,7 +132,7 @@ function handleClick(evt) {
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
-function checkForWin() {
+const checkForWin = () => {
   function _win(cells) {
     // Check four cells to see if they're all color of current player
     //  - cells: list of four (y, x) cells
