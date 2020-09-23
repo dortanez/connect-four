@@ -1,23 +1,28 @@
-const WIDTH = 7;
-const HEIGHT = 6;
-
 const playerTurn = document.getElementById('player-turn');
-let currPlayer = 1; 
 playerTurn.innerText = 'Player 1\'s turn'
 
-// array of rows, each row is array of cells  (board[y][x])
-const board = []; 
 
-// create board array
-const makeBoard = () => {
-  for(let i = 0; i < HEIGHT; i++) {
-    const arr = [];
-    for(let j = 0; j < WIDTH; j++) {
-      arr.push(null);
+class Game {
+  constructor(p1, p2, height = 7, width = 6) {
+    this.height = height;
+    this.width = width;
+    this.players = [p1, p2];
+    this.currPlayer = p1;
+    this.gameOver = false;
+    makeBoard();
+    makeHtmlBoard();
+  }
+  makeBoard() {
+    this.board = [];
+    for(let y = 0; y < this.height; y++) {
+
     }
-    board.push(arr);
   }
 }
+
+
+// create board array
+const 
 
 const makeHtmlBoard = () => {
   const board = document.querySelector('#board');
