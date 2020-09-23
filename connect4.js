@@ -6,8 +6,8 @@ class Game {
   constructor(p1, p2, height = 7, width = 6) {
     this.height = height;
     this.width = width;
-    this.players = [p1, p2];
-    this.currPlayer = p1;
+    this.players = ['1', '2'];
+    this.currPlayer = this.players[0];
     this.gameOver = false;
     this.makeBoard();
     this.makeHtmlBoard();
@@ -15,6 +15,7 @@ class Game {
   // create board array
   makeBoard() {
     this.board = [];
+    console.log(this.board)
     for(let y = 0; y < this.height; y++) {
       this.board.push(Array.from({length: this.width}));
     }
@@ -50,21 +51,18 @@ class Game {
   }
   /** findSpotForCol: given column x, return top empty y (null if filled) */
   findSpotForCol(x) {
-    for(let y = this.height - 1; y >= 0; y--) {
-      if(this.board[y][x] !== null) {
-        continue;
-      } else {
+    for (let y = this.height - 1; y >= 0; y--) {
+      if (!this.board[y][x]) {
         return y;
       }
     }
+    return null;
   }
   /** placeInTable: update DOM to place piece into HTML table of board */
   placeInTable(y,x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.style.backgroundColor = this.currPlayer.color;
-    piece.classList.add(`p${currPlayer}`);
-  
+    piece.classList.add(`p${this.currPlayer}`);
     const cell = document.getElementById(`${y}-${x}`);
     cell.appendChild(piece);
   }
@@ -73,7 +71,7 @@ class Game {
       alert(msg);
       clearInterval(interval)
     },500);
-    restartGame();
+    this.restartGame();
     const top = document.querySelector('#column-top');
     top.removeEventListener('click',this.handleGameClick)
   }
@@ -92,37 +90,38 @@ class Game {
     if (y === null) {
       return;
     }
-
-    this.board[y][x] = this.currPlayer
+    
     // place piece in board and add to HTML table
     this.placeInTable(y, x);
 
     // update board variable to which player took the spot - if the spot is taken by player number, do nothing. else, add player number in spot
-    // if(this.board[y][x] !== null) {
-    //   return;
-    // } else {
-    //   this.board[y][x] = this.currPlayer;
-    // }
+    this.board[y][x] = this.currPlayer
 
     // check for win
-    // if (checkForWin()) {
-    //   this.gameOver = true;
-    //   return this.endGame(`Player ${currPlayer} wins!`);
-    // }
+    if (this.checkForWin()) {
+      this.gameOver = true;
+      return this.endGame(`Player ${this.currPlayer} wins!`);
+    }
 
-    // check for tie - see if every value in board array has player number
-    // const isTie = () => {
-    //   return this.board.every((val) => {
-    //     return val.indexOf(null) === -1;
-    //   })
-    // }
-    // if(this.isTie()) {
-    //   alert('tie');
-    //   location.reload();
-    // }
+    // // check for tie - see if every value in board array has player number
+    const isTie = () => {
+      return this.board.every((val) => {
+        return val.indexOf(undefined) === -1;
+      })
+    }
+    if(isTie()) {
+      alert('It\'s a tie!');
+      location.reload();
+    }
 
     // switch players
-    this.currPlayer = this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
+    if(this.currPlayer === this.players[0]) {
+      this.currPlayer = this.players[1];
+      playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
+    } else {
+      this.currPlayer = this.players[0];
+      playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
+    }
   }
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
   checkForWin() {
@@ -177,5 +176,4 @@ class Game {
 }
 
 new Game()
-
 
