@@ -1,13 +1,9 @@
-const playerTurn = document.getElementById('player-turn');
-playerTurn.innerText = 'Player 1\'s turn'
-
-
 class Game {
   constructor(p1, p2, height = 7, width = 6) {
     this.height = height;
     this.width = width;
-    this.players = ['1', '2'];
-    this.currPlayer = this.players[0];
+    this.players = [p1,p2];
+    this.currPlayer = p1;
     this.gameOver = false;
     this.makeBoard();
     this.makeHtmlBoard();
@@ -15,21 +11,20 @@ class Game {
   // create board array
   makeBoard() {
     this.board = [];
-    console.log(this.board)
     for(let y = 0; y < this.height; y++) {
       this.board.push(Array.from({length: this.width}));
     }
   }
   makeHtmlBoard() {
     const board = document.querySelector('#board');
+    const playerTurn = document.getElementById('player-turn');
+    playerTurn.innerText = 'Player 1\'s turn';
   
     // create top row
     const top = document.createElement("tr");
-  
     top.setAttribute("id", "column-top");
     this.handleGameClick = this.handleClick.bind(this);
     top.addEventListener("click", this.handleGameClick);
-  
     for(let x = 0; x < this.width; x++) {
       const headCell = document.createElement("td");
       headCell.setAttribute("id", x);
@@ -76,9 +71,11 @@ class Game {
     top.removeEventListener('click',this.handleGameClick)
   }
   restartGame() {
-    setInterval(() => {
+    setInterval(function() {
       location.reload();
     },500)
+    
+
   }
   // clicking to play a piece
   handleClick(evt) {
@@ -115,6 +112,7 @@ class Game {
     }
 
     // switch players
+    const playerTurn = document.getElementById('player-turn');
     if(this.currPlayer === this.players[0]) {
       this.currPlayer = this.players[1];
       playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
@@ -175,5 +173,5 @@ class Game {
   }
 }
 
-new Game()
+new Game(1,2);
 
