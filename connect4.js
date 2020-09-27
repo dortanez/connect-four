@@ -1,5 +1,5 @@
 class Game {
-  constructor(p1, p2, height = 7, width = 6) {
+  constructor(p1, p2, height = 6, width = 7) {
     this.height = height;
     this.width = width;
     this.players = [p1,p2];
@@ -8,6 +8,7 @@ class Game {
     this.makeBoard();
     this.makeHtmlBoard();
   }
+
   // create board array
   makeBoard() {
     this.board = [];
@@ -44,6 +45,7 @@ class Game {
       board.append(row);
     }
   }
+
   /** findSpotForCol: given column x, return top empty y (null if filled) */
   findSpotForCol(x) {
     for (let y = this.height - 1; y >= 0; y--) {
@@ -53,6 +55,7 @@ class Game {
     }
     return null;
   }
+
   /** placeInTable: update DOM to place piece into HTML table of board */
   placeInTable(y,x) {
     const piece = document.createElement('div');
@@ -61,6 +64,8 @@ class Game {
     const cell = document.getElementById(`${y}-${x}`);
     cell.appendChild(piece);
   }
+  
+  // function of what will happen when game ends
   endGame(msg) {
     const interval = setInterval(() => {
       alert(msg);
@@ -70,16 +75,18 @@ class Game {
     const top = document.querySelector('#column-top');
     top.removeEventListener('click',this.handleGameClick)
   }
+
+  // function to restart game after game ends
   restartGame() {
     setInterval(function() {
       location.reload();
     },500)
-    
-
   }
   // clicking to play a piece
   handleClick(evt) {
+
   // get x from ID of clicked cell
+  // + converts string number to number
     const x = +evt.target.id;
 
     // get next spot in column (if none, ignore click)
@@ -106,21 +113,26 @@ class Game {
         return val.indexOf(undefined) === -1;
       })
     }
+
+    // create reset function to reset all game. dont use reload page function
     if(isTie()) {
-      alert('It\'s a tie!');
-      location.reload();
+      this.endGame("It's a tie!");
     }
 
     // switch players
-    const playerTurn = document.getElementById('player-turn');
-    if(this.currPlayer === this.players[0]) {
-      this.currPlayer = this.players[1];
-      playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
-    } else {
-      this.currPlayer = this.players[0];
-      playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
+    const switchPlayers = () => {
+      const playerTurn = document.getElementById('player-turn');
+      if(this.currPlayer === this.players[0]) {
+        this.currPlayer = this.players[1];
+        playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
+      } else {
+        this.currPlayer = this.players[0];
+        playerTurn.innerText = "Player " + this.currPlayer + "\'s turn"
+      }
     }
+    switchPlayers();
   }
+
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
   checkForWin() {
     const _win = (cells) => {
